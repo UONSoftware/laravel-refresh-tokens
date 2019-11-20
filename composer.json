@@ -1,0 +1,33 @@
+{
+  "name": "uonsoftware/refresh-tokens",
+  "description": "Laravel refresh token library",
+  "type": "library",
+  "license": "Apache 2.0",
+  "authors": [
+    {
+      "name": "Dusan Malusev",
+      "email": "dusan.998@outlook.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=7.3",
+    "nesbot/carbon": "2.26.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^4.0"
+  },
+  "autoload": {
+    "UonSoftware\\RefreshTokens\\": "src/"
+  },
+  "autoload-dev": {
+    "UonSoftware\\RefreshTokens\\Tests\\": "tests/"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "UonSoftware\\RefreshTokens\\RefreshTokensServiceProvider"
+      ]
+    }
+  }
+}
