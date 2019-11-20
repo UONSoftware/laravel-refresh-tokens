@@ -5,7 +5,7 @@ namespace UonSoftware\RefreshTokens\Contracts;
 
 
 use UonSoftware\RefreshTokens\RefreshToken;
-use Hob\RsaSigner\Exceptions\SignatureCorrupted;
+use UonSoftware\RsaSigner\Exceptions\SignatureCorrupted;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Throwable;
 

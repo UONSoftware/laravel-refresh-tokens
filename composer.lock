@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5c106d9e33b72f5d38d4fb51489bd75",
+    "content-hash": "b9b4942fda4eab6a0574277da6e40a28",
     "packages": [
         {
             "name": "nesbot/carbon",
@@ -264,6 +264,52 @@
                 "standards"
             ],
             "time": "2019-09-17T11:12:18+00:00"
+        },
+        {
+            "name": "uonsoftware/rsa-signer",
+            "version": "v1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/UONSoftware/rsa-signer.git",
+                "reference": "82b6054278b3d0b88ef2d2f1ff68fc55ccdf0141"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/UONSoftware/rsa-signer/zipball/82b6054278b3d0b88ef2d2f1ff68fc55ccdf0141",
+                "reference": "82b6054278b3d0b88ef2d2f1ff68fc55ccdf0141",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "providers": [
+                    "UonSoftware\\RsaSigner\\RsaSignerServiceProvider"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "UonSoftware\\RsaSigner\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Dusan Malusev",
+                    "email": "dusan.998@outlook.com"
+                }
+            ],
+            "description": "Laravel RSA Signer",
+            "time": "2019-11-20T10:26:05+00:00"
         }
     ],
     "packages-dev": [
