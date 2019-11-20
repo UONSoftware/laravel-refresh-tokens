@@ -2,7 +2,7 @@
   "name": "uonsoftware/refresh-tokens",
   "description": "Laravel refresh token library",
   "type": "library",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Dusan Malusev",
