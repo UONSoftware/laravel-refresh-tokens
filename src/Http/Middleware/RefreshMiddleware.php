@@ -94,7 +94,7 @@ class RefreshMiddleware
         $tokenSinger = $this->container->get($tokenSingerClass);
         
         if ($instance->hasTokenExpired()) {
-            $next($request);
+            return $next($request);
         } else {
             $refreshToken = $request->header('X-Refresh-Token', null);
             
