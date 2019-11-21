@@ -15,7 +15,7 @@ class CreateRefreshTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create(config('refresh_tokens.table'), function (Blueprint $table) {
+        Schema::create('refresh_tokens', function (Blueprint $table) {
             $key = config('refresh_tokens.user.foreign_key');
             $parentKey = config('refresh_tokens.user.id');
             $type = config('refresh_tokens.user.key_type');
@@ -44,11 +44,10 @@ class CreateRefreshTokensTable extends Migration
      */
     public function down()
     {
-        $refreshTokensTable = config('refresh_tokens.table');
-        $foreignKey = $key = config('refresh_tokens.user.foreign_key');
+        $foreignKey = config('refresh_tokens.user.foreign_key');
     
-        Schema::table($refreshTokensTable, function (Blueprint $table) use ($refreshTokensTable, $foreignKey) {
-            $table->dropForeign("{$table}_{$foreignKey}_foreign");
+        Schema::table('refresh_tokens', function (Blueprint $table) use ($foreignKey) {
+            $table->dropForeign("refresh_tokens_{$foreignKey}_foreign");
         });
         Schema::dropIfExists('refresh_tokens');
     }
