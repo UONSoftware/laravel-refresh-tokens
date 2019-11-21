@@ -21,4 +21,5 @@ return [
     'token_signer' => TymonJwtSigner::class,
     'authenticate' => TymonAuthenticate::class,
     'header' => 'X-Refresh-Token',
+    'resource' => 'UserResource'
 ];
