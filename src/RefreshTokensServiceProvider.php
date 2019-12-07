@@ -23,7 +23,7 @@ use UonSoftware\RefreshTokens\Contracts\{
  * Class RefreshTokensServiceProvider
  *
  * @package UonSoftware\RefreshTokens
- * @authr   Dusan Malusev <malusev@uon.rs>
+ * @author   Dusan Malusev <malusev@uon.rs>
  */
 class RefreshTokensServiceProvider extends ServiceProvider
 {
