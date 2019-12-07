@@ -4,8 +4,8 @@
 namespace UonSoftware\RefreshTokens\Service;
 
 
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
 use UonSoftware\RefreshTokens\RefreshToken;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
 
 /**
  * Class RefreshTokenDecoder

@@ -4,12 +4,13 @@
 namespace UonSoftware\RefreshTokens\Service;
 
 
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenEncoder as Encoder;
-use UonSoftware\RefreshTokens\RefreshToken;
 use InvalidArgumentException;
+use UonSoftware\RefreshTokens\RefreshToken;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenEncoder as Encoder;
 
 /**
  * Class RefreshTokenEncoder
+ *
  * @package UonSoftware\RefreshTokens\Service
  */
 class RefreshTokenEncoder implements Encoder
@@ -17,7 +18,8 @@ class RefreshTokenEncoder implements Encoder
 
     /**
      * @param string|RefreshToken $data
-     * @param string $signature
+     * @param string              $signature
+     *
      * @return string
      */
     public function encode($data, string $signature): string

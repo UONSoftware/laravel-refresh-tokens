@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Config\Repository as Config;
 use UonSoftware\RefreshTokens\RefreshToken;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenRepository as Repository;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier as Verifier;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier as Verifier;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenRepository as Repository;
 
 class RefreshTokenService implements Repository
 {

@@ -4,6 +4,7 @@
 namespace UonSoftware\RefreshTokens\Console;
 
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -51,7 +52,7 @@ class DeleteExpiredRefreshTokens extends Command
                 DB::commit();
             }
             $this->output->writeln('Expired refresh tokens have been deleted');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage());
             $this->output->error($e->getMessage());

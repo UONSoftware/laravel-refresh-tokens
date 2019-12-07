@@ -6,22 +6,22 @@ namespace UonSoftware\RefreshTokens\Http\Middleware;
 
 use Closure;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
-use UonSoftware\RefreshTokens\Contracts\TokenSigner;
-use UonSoftware\RefreshTokens\Contracts\UserJwtExpired;
-use UonSoftware\RefreshTokens\RefreshToken;
-use RuntimeException;
 use Throwable;
+use RuntimeException;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Psr\Container\ContainerInterface;
+use UonSoftware\RefreshTokens\RefreshToken;
+use UonSoftware\RefreshTokens\Contracts\TokenSigner;
 use Illuminate\Contracts\Config\Repository as Config;
+use UonSoftware\RefreshTokens\Contracts\UserJwtExpired;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use UonSoftware\RefreshTokens\Exceptions\RefreshTokenExpired;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier;
 use UonSoftware\RefreshTokens\Exceptions\InvalidRefreshToken;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenGenerator;
 use UonSoftware\RefreshTokens\Exceptions\RefreshTokenNotFound;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
 
 class RefreshMiddleware
 {

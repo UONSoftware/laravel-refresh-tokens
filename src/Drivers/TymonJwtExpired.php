@@ -6,9 +6,8 @@ namespace UonSoftware\RefreshTokens\Drivers;
 
 use Throwable;
 use Tymon\JWTAuth\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use UonSoftware\RefreshTokens\Contracts\UserJwtExpired;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use UonSoftware\RefreshTokens\Contracts\UserJwtExpired;
 
 class TymonJwtExpired implements UserJwtExpired
 {

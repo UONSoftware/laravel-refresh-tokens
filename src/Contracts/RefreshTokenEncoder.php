@@ -10,7 +10,8 @@ interface RefreshTokenEncoder extends RefreshTokenParser
 {
     /**
      * @param RefreshToken|string $data
-     * @param string $signature
+     * @param string              $signature
+     *
      * @return string
      */
     public function encode($data, string $signature): string;

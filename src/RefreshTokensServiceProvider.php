@@ -4,27 +4,26 @@
 namespace UonSoftware\RefreshTokens;
 
 
-use UonSoftware\RefreshTokens\Service\RefreshTokenEncoder;
-use UonSoftware\RefreshTokens\Contracts\{
-    RefreshTokenDecoder as Decoder,
-    RefreshTokenEncoder as Encoder,
-    RefreshTokenGenerator as Generator,
-    RefreshTokenRepository as Repository,
-    RefreshTokenVerifier as Verifier
-};
-use UonSoftware\RefreshTokens\Service\RefreshTokenDecoder;
 use Illuminate\Support\ServiceProvider;
-use UonSoftware\RefreshTokens\Console\DeleteExpiredRefreshTokens;
-use UonSoftware\RefreshTokens\Service\RefreshTokenService as Service;
+use UonSoftware\RefreshTokens\Service\RefreshTokenDecoder;
+use UonSoftware\RefreshTokens\Service\RefreshTokenEncoder;
 use UonSoftware\RefreshTokens\Service\RefreshTokenVerifier;
 use UonSoftware\RefreshTokens\Service\RefreshTokenGenerator;
 use UonSoftware\RefreshTokens\Http\Middleware\RefreshMiddleware;
+use UonSoftware\RefreshTokens\Console\DeleteExpiredRefreshTokens;
+use UonSoftware\RefreshTokens\Service\RefreshTokenService as Service;
+use UonSoftware\RefreshTokens\Contracts\{
+    RefreshTokenDecoder as Decoder,
+    RefreshTokenEncoder as Encoder,
+    RefreshTokenVerifier as Verifier,
+    RefreshTokenGenerator as Generator,
+    RefreshTokenRepository as Repository};
 
 /**
  * Class RefreshTokensServiceProvider
  *
  * @package UonSoftware\RefreshTokens
- * @authr Dusan Malusev <malusev@uon.rs>
+ * @authr   Dusan Malusev <malusev@uon.rs>
  */
 class RefreshTokensServiceProvider extends ServiceProvider
 {
@@ -49,6 +48,18 @@ class RefreshTokensServiceProvider extends ServiceProvider
         }
     }
 
+    public function boot(): void
+    {
+        $this->publishes(
+            [
+                __DIR__ . '/config/refresh_tokens.php' => config_path('refresh_tokens.php'),
+            ]
+        );
+
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->aliasMiddleware();
+    }
+
     /**
      * Alias the middleware.
      *
@@ -63,18 +74,5 @@ class RefreshTokensServiceProvider extends ServiceProvider
         foreach ($this->middlewareAliases as $alias => $middleware) {
             $router->$method($alias, $middleware);
         }
-    }
-
-
-    public function boot(): void
-    {
-        $this->publishes(
-            [
-                __DIR__ . '/config/refresh_tokens.php' => config_path('refresh_tokens.php'),
-            ]
-        );
-
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->aliasMiddleware();
     }
 }

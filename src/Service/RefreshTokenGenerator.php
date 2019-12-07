@@ -4,19 +4,19 @@
 namespace UonSoftware\RefreshTokens\Service;
 
 
+use Throwable;
+use TypeError;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenEncoder as Encoder;
-use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier as Verifier;
+use UonSoftware\RefreshTokens\RefreshToken;
+use Illuminate\Contracts\Config\Repository as Config;
 use UonSoftware\RsaSigner\Contracts\RsaSigner as Signer;
 use UonSoftware\RsaSigner\Exceptions\SignatureCorrupted;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
-use UonSoftware\RefreshTokens\RefreshToken;
-use Illuminate\Contracts\Config\Repository as Config;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenEncoder as Encoder;
+use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier as Verifier;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenGenerator as Contract;
-use Throwable;
-use TypeError;
 
 /**
  * Class RefreshTokenGenerator
@@ -53,11 +53,11 @@ class RefreshTokenGenerator implements Contract
     /**
      * RefreshTokenGenerator constructor.
      *
-     * @param Encoder $encoder
-     * @param Decoder $decoder
-     * @param Signer $signer
+     * @param Encoder  $encoder
+     * @param Decoder  $decoder
+     * @param Signer   $signer
      * @param Verifier $verifier
-     * @param Config $config
+     * @param Config   $config
      */
     public function __construct(Encoder $encoder, Decoder $decoder, Signer $signer, Verifier $verifier, Config $config)
     {
@@ -69,27 +69,28 @@ class RefreshTokenGenerator implements Contract
     }
 
     /**
-     * @param RefreshToken|string|null $refreshToken
-     * @param integer|string|null $userId
-     * @param int|null $length
-     *
-     * @return array
      * @throws SignatureCorrupted
      * @throws ModelNotFoundException
      * @throws Throwable
+     *
+     * @param RefreshToken|string|null $refreshToken
+     * @param integer|string|null      $userId
+     * @param int|null                 $length
+     *
+     * @return array
      */
     public function generateNewRefreshToken($refreshToken, $userId = null, ?int $length = null): array
     {
-
         if ($length === null) {
             $length = $this->config->get('refresh_tokens.token_length');
         }
 
         if (is_string($refreshToken)) {
             [$refreshToken] = $this->decoder->decode($refreshToken);
-
-        } else if ($refreshToken === null) {
-            $refreshToken = new RefreshToken();
+        } else {
+            if ($refreshToken === null) {
+                $refreshToken = new RefreshToken();
+            }
         }
 
 
@@ -104,8 +105,7 @@ class RefreshTokenGenerator implements Contract
 
 
         if ($refreshToken->user_id === null) {
-
-            if($userId === null) {
+            if ($userId === null) {
                 throw new InvalidArgumentException('User id cannot be null');
             }
 
