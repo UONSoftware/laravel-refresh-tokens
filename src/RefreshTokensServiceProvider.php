@@ -14,6 +14,7 @@ use UonSoftware\RefreshTokens\Contracts\{
 };
 use UonSoftware\RefreshTokens\Service\RefreshTokenDecoder;
 use Illuminate\Support\ServiceProvider;
+use UonSoftware\RefreshTokens\Console\DeleteExpiredRefreshTokens;
 use UonSoftware\RefreshTokens\Service\RefreshTokenService as Service;
 use UonSoftware\RefreshTokens\Service\RefreshTokenVerifier;
 use UonSoftware\RefreshTokens\Service\RefreshTokenGenerator;
@@ -23,6 +24,7 @@ use UonSoftware\RefreshTokens\Http\Middleware\RefreshMiddleware;
  * Class RefreshTokensServiceProvider
  *
  * @package UonSoftware\RefreshTokens
+ * @authr Dusan Malusev <malusev@uon.rs>
  */
 class RefreshTokensServiceProvider extends ServiceProvider
 {
@@ -40,6 +42,11 @@ class RefreshTokensServiceProvider extends ServiceProvider
         $this->app->singleton(Generator::class, RefreshTokenGenerator::class);
         $this->app->singleton(Verifier::class, RefreshTokenVerifier::class);
         $this->app->singleton(Repository::class, Service::class);
+
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands(DeleteExpiredRefreshTokens::class);
+        }
     }
 
     /**
