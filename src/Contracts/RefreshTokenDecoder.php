@@ -6,5 +6,5 @@ namespace UonSoftware\RefreshTokens\Contracts;
 
 interface RefreshTokenDecoder extends RefreshTokenParser
 {
-    public function decode(string $refreshToken): array;
+    public function decode(string $refreshToken, bool $selectFromDatabase = true): array;
 }

@@ -9,23 +9,33 @@ use UonSoftware\RefreshTokens\RefreshToken;
 
 /**
  * Class RefreshTokenDecoder
+ *
  * @package UonSoftware\RefreshTokens\Service
  */
 class RefreshTokenDecoder implements Decoder
 {
 
     /**
-     * @param string $refreshToken
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     *
+     * @param boolean $selectFromDatabase
+     * @param string  $refreshToken
+     *
      * @return array
      */
-    public function decode(string $refreshToken): array
+    public function decode(string $refreshToken, bool $selectFromDatabase = true): array
     {
         [$token, $timeStamp, $signature] = explode('.', $refreshToken);
-
-        /** @var RefreshToken $rf */
-        $rf = RefreshToken::query()->where('token', '=', $token)->firstOrFail();
-
-        return [$rf, sprintf(static::DATA_FORMAT, $token, $timeStamp), $signature];
+        $rf = null;
+        if ($selectFromDatabase) {
+            /** @var RefreshToken $rf */
+            $rf = RefreshToken::query()->where('token', '=', $token)->firstOrFail();
+        }
+        return [
+            $rf,
+            sprintf(static::DATA_FORMAT, $token, $timeStamp),
+            $token,
+            $signature,
+        ];
     }
 }

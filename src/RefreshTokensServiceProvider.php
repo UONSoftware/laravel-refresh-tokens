@@ -5,24 +5,29 @@ namespace UonSoftware\RefreshTokens;
 
 
 use UonSoftware\RefreshTokens\Service\RefreshTokenEncoder;
-use UonSoftware\RefreshTokens\Contracts\{RefreshTokenDecoder as Decoder,
+use UonSoftware\RefreshTokens\Contracts\{
+    RefreshTokenDecoder as Decoder,
     RefreshTokenEncoder as Encoder,
     RefreshTokenGenerator as Generator,
-    RefreshTokenVerifier as Verifier};
+    RefreshTokenRepository as Repository,
+    RefreshTokenVerifier as Verifier
+};
 use UonSoftware\RefreshTokens\Service\RefreshTokenDecoder;
 use Illuminate\Support\ServiceProvider;
+use UonSoftware\RefreshTokens\Service\RefreshTokenService as Service;
 use UonSoftware\RefreshTokens\Service\RefreshTokenVerifier;
 use UonSoftware\RefreshTokens\Service\RefreshTokenGenerator;
 use UonSoftware\RefreshTokens\Http\Middleware\RefreshMiddleware;
 
 /**
  * Class RefreshTokensServiceProvider
+ *
  * @package UonSoftware\RefreshTokens
  */
 class RefreshTokensServiceProvider extends ServiceProvider
 {
     protected $middlewareAliases = [
-        'refresh.token' => RefreshMiddleware::class
+        'refresh.token' => RefreshMiddleware::class,
     ];
 
     public function register(): void
@@ -34,7 +39,7 @@ class RefreshTokensServiceProvider extends ServiceProvider
         $this->app->singleton(Encoder::class, RefreshTokenEncoder::class);
         $this->app->singleton(Generator::class, RefreshTokenGenerator::class);
         $this->app->singleton(Verifier::class, RefreshTokenVerifier::class);
-
+        $this->app->singleton(Repository::class, Service::class);
     }
 
     /**
@@ -56,9 +61,11 @@ class RefreshTokensServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/config/refresh_tokens.php' => config_path('refresh_tokens.php'),
-        ]);
+        $this->publishes(
+            [
+                __DIR__ . '/config/refresh_tokens.php' => config_path('refresh_tokens.php'),
+            ]
+        );
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->aliasMiddleware();
