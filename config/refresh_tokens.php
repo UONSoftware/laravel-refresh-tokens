@@ -85,5 +85,5 @@ return [
     | Formatting of the user when it's token is refreshed
     |
     */
-    'resource' => UserResource::class,
+    'resource'     => UserResource::class,
 ];
