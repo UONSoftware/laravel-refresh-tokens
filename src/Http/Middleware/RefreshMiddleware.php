@@ -25,33 +25,33 @@ use UonSoftware\RefreshTokens\Exceptions\RefreshTokenNotFound;
 
 class RefreshMiddleware
 {
-    
+
     /**
      * @var ContainerInterface
      */
     protected $container;
-    
+
     /**
      * @var Config
      */
     protected $config;
-    
+
     /**
      * @var RefreshTokenGenerator
      */
     protected $refreshTokenGenerator;
-    
+
     /**
      * @var RefreshTokenVerifier
      */
     protected $refreshTokenVerifier;
-    
-    
+
+
     /**
      * @var Decoder
      */
     protected $decoder;
-    
+
     public function __construct(
         ContainerInterface $container,
         Config $config,
@@ -65,72 +65,81 @@ class RefreshMiddleware
         $this->refreshTokenVerifier = $refreshTokenVerifier;
         $this->decoder = $decoder;
     }
-    
+
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
+     * @throws Exception
+     *
+     * @param Closure $next
+     *
+     * @param Request $request
      *
      * @return mixed
-     * @throws Exception
      */
     public function handle($request, Closure $next)
     {
-        $data = [];
-        
         $userJwtExpiredClass = $this->config->get('refresh_tokens.jwt_expired');
         $tokenSingerClass = $this->config->get('refresh_tokens.token_signer');
         $authenticateClass = $this->config->get('refresh_tokens.authenticate');
-        
-        if ($userJwtExpiredClass === null || $tokenSingerClass === null || $authenticateClass === null) {
+        $refreshTokenHeader = $this->config->get('refresh_tokens.header');
+
+        if (
+            $refreshTokenHeader === null ||
+            $userJwtExpiredClass === null ||
+            $tokenSingerClass === null ||
+            $authenticateClass === null
+        ) {
             throw new RuntimeException('Jwt expired or token signer or authenticate interface is null');
         }
-        
+
         /** @var UserJwtExpired $instance */
         $instance = $this->container->get($userJwtExpiredClass);
-        
+
+        $refreshToken = $request->header($refreshTokenHeader, null);
+
+        if ($refreshToken === null || $instance->hasTokenExpired()) {
+            return $next($request);
+        }
+
+
         /** @var TokenSigner $tokenSinger */
         $tokenSinger = $this->container->get($tokenSingerClass);
-        
-        if ($instance->hasTokenExpired()) {
-            return $next($request);
-        } else {
-            $refreshToken = $request->header('X-Refresh-Token', null);
-            
-            try {
-                $rf = $this->refreshTokenVerifier->verify($refreshToken);
-                /** @var RefreshToken $rf */
-                [1 => $refreshToken] = $this->refreshTokenGenerator->generateNewRefreshToken($rf);
-                
-                $user = $rf->user;
-                /** @var string $jwt */
-                $jwt = $tokenSinger->sign($user);
-                
-                $request->headers->replace([
-                    'Authorization' => 'Bearer '.$jwt,
-                ]);
-                
-                $resource = $this->config->get('refresh_tokens.resource');
-                $data = [
-                    'auth' => [
-                        'token' => $jwt,
-                        'refreshToken' => $refreshToken,
-                        'user' => new $resource($user),
-                    ],
-                ];
-            } catch (InvalidRefreshToken | RefreshTokenExpired $e) {
-                return response()->json(['message' => 'Forbidden.'], 403);
-            } catch (RefreshTokenNotFound $e) {
-                return response()->json(['message' => 'Unauthenticated.'], 401);
-            } catch (ModelNotFoundException $e) {
-                return response()->json(['message' => 'Refresh token not found'], 404);
-            } catch (Throwable $e) {
-                return response()->json(['message' => 'Internal server error'], 500);
-            }
-            /** @var JsonResponse $response */
-            $response = $next($request);
-            return $response->setData(array_merge((array) $response->getData(true), $data));
+
+        /** @var \UonSoftware\RefreshTokens\Contracts\Authenticate $authenticate */
+        $authenticate = $this->container->get($authenticateClass);
+
+
+        try {
+            $rf = $this->refreshTokenVerifier->verify($refreshToken);
+            /** @var RefreshToken $rf */
+            [1 => $refreshToken] = $this->refreshTokenGenerator->generateNewRefreshToken($rf);
+
+            $user = $rf->user;
+            /** @var string $jwt */
+            $jwt = $tokenSinger->sign($user);
+
+            $authenticate->authenticate($request, $jwt);
+
+            $resource = $this->config->get('refresh_tokens.resource');
+            $data = [
+                'auth' => [
+                    'token'        => $jwt,
+                    'refreshToken' => $refreshToken,
+                    'user'         => new $resource($user),
+                ],
+            ];
+        } catch (InvalidRefreshToken | RefreshTokenExpired $e) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        } catch (RefreshTokenNotFound $e) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Refresh token not found'], 404);
+        } catch (Throwable $e) {
+            return response()->json(['message' => 'Internal server error'], 500);
         }
+        /** @var JsonResponse $response */
+        $response = $next($request);
+        return $response->setData(array_merge((array)$response->getData(true), $data));
     }
 }

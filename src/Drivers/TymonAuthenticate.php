@@ -4,18 +4,17 @@
 namespace UonSoftware\RefreshTokens\Drivers;
 
 
-use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Http\Request;
 use UonSoftware\RefreshTokens\Contracts\Authenticate;
 
 class TymonAuthenticate implements Authenticate
 {
-    private $jwt;
-    public function __construct(JWTAuth $jwt) {
-        $this->jwt = $jwt;
-    }
 
-    public function authenticate(string $jwt)
+    /**
+     * @inheritDoc
+     */
+    public function authenticate(Request $request, string $jwt): void
     {
-        return $this->jwt->setToken($jwt)->authenticate();
+        $request->headers->replace(['Authorization' => 'Bearer ' . $jwt]);
     }
 }

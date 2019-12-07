@@ -13,6 +13,7 @@ use UonSoftware\RefreshTokens\Service\RefreshTokenDecoder;
 use Illuminate\Support\ServiceProvider;
 use UonSoftware\RefreshTokens\Service\RefreshTokenVerifier;
 use UonSoftware\RefreshTokens\Service\RefreshTokenGenerator;
+use UonSoftware\RefreshTokens\Http\Middleware\RefreshMiddleware;
 
 /**
  * Class RefreshTokensServiceProvider
@@ -20,6 +21,10 @@ use UonSoftware\RefreshTokens\Service\RefreshTokenGenerator;
  */
 class RefreshTokensServiceProvider extends ServiceProvider
 {
+    protected $middlewareAliases = [
+        'refresh.token' => RefreshMiddleware::class
+    ];
+
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/refresh_tokens.php', 'refresh_tokens');
@@ -29,6 +34,23 @@ class RefreshTokensServiceProvider extends ServiceProvider
         $this->app->singleton(Encoder::class, RefreshTokenEncoder::class);
         $this->app->singleton(Generator::class, RefreshTokenGenerator::class);
         $this->app->singleton(Verifier::class, RefreshTokenVerifier::class);
+
+    }
+
+    /**
+     * Alias the middleware.
+     *
+     * @return void
+     */
+    protected function aliasMiddleware(): void
+    {
+        $router = $this->app['router'];
+
+        $method = method_exists($router, 'aliasMiddleware') ? 'aliasMiddleware' : 'middleware';
+
+        foreach ($this->middlewareAliases as $alias => $middleware) {
+            $router->$method($alias, $middleware);
+        }
     }
 
 
@@ -39,5 +61,6 @@ class RefreshTokensServiceProvider extends ServiceProvider
         ]);
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->aliasMiddleware();
     }
 }

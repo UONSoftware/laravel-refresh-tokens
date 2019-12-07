@@ -16,6 +16,7 @@ class RefreshTokenDecoder implements Decoder
 
     /**
      * @param string $refreshToken
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @return array
      */
     public function decode(string $refreshToken): array
