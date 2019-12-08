@@ -12,9 +12,9 @@
   "minimum-stability": "stable",
   "require": {
     "php": ">=7.3",
-    "nesbot/carbon": "2.26.0",
+    "nesbot/carbon": "^2.26.0",
     "uonsoftware/rsa-signer": "^1.0.5",
-    "tymon/jwt-auth": "1.0.0-rc.5"
+    "tymon/jwt-auth": "^1.0.0-rc.5"
   },
   "require-dev": {
     "orchestra/testbench": "^4.0"
