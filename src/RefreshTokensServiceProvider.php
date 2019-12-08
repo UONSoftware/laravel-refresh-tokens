@@ -52,7 +52,7 @@ class RefreshTokensServiceProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                __DIR__ . '/config/refresh_tokens.php' => config_path('refresh_tokens.php'),
+                __DIR__ . '/../config/refresh_tokens.php' => config_path('refresh_tokens.php'),
             ]
         );
 
