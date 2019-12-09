@@ -4,12 +4,14 @@
 namespace UonSoftware\RefreshTokens\Service;
 
 
+use RuntimeException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Config\Repository as Config;
 use UonSoftware\RefreshTokens\RefreshToken;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenDecoder as Decoder;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenVerifier as Verifier;
+use UonSoftware\RefreshTokens\Exceptions\RefreshTokenOwnershipsException;
 use UonSoftware\RefreshTokens\Contracts\RefreshTokenRepository as Repository;
 
 class RefreshTokenService implements Repository
@@ -65,28 +67,33 @@ class RefreshTokenService implements Repository
      * @throws \UonSoftware\RefreshTokens\Exceptions\InvalidRefreshToken
      * @throws \UonSoftware\RefreshTokens\Exceptions\RefreshTokenExpired
      * @throws \UonSoftware\RefreshTokens\Exceptions\RefreshTokenNotFound
+     * @throws RefreshTokenOwnershipsException
      *
      * @param string $token
      *
+     * @param int    $user
+     *
      * @return bool
      */
-    public function revokeToken(string $token): bool
+    public function revokeToken(string $token, int $user): bool
     {
         $this->refreshTokenVerifier->verify($token);
-        [2 => $token] = $this->decoder->decode($token, false);
+
+        /**
+         * @var RefreshToken $refreshToken
+         */
+        [0 => $refreshToken] = $this->decoder->decode($token);
 
         DB::beginTransaction();
-
-        $numOfRows = RefreshToken::query()
-            ->where('token', '=', $token)
-            ->delete();
-
-        if ($numOfRows === 0) {
-            DB::rollBack();
-            return false;
+        $foreignKey = $this->config->get('lara_auth.user.foreign_key');
+        if ($refreshToken->{$foreignKey} !== $user) {
+            throw new RefreshTokenOwnershipsException();
         }
 
-        DB::commit();
+        if (!$refreshToken->delete()) {
+            throw new RuntimeException('Error while deleting refresh token');
+        }
+
         return true;
     }
 }
